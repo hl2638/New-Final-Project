@@ -127,7 +127,7 @@ class Five:
 
     @staticmethod
     def send_result(who, from_sock, to_sock):
-        result = ('o' if who else '*') + 'Wins'
+        result = (' o' if who else ' *') + ' Wins'
         mysend(from_sock, result)
         mysend(to_sock, result)
 
@@ -137,12 +137,6 @@ class Five:
         mysend(to_sock, ' Please input(x,y),now is ' + ('o' if who else '*') + ':')
 
 
-def game_init():
-    return Five(10, 10)
-    # pdb.set_trace()
 
-
-def start(move, from_sock, to_sock):
-    game.make_move(move, from_sock, to_sock)
 
 

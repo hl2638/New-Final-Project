@@ -11,6 +11,7 @@ M_SEARCH    = '6'
 M_LIST      = '7'
 M_POEM      = '8'
 M_TIME      = '9'
+M_GAME      = 'X'
 
 #CHAT_IP = ''    #for Mac
 CHAT_IP = socket.gethostname()  #for PC
