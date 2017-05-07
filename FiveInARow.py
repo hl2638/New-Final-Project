@@ -32,7 +32,7 @@ class Five:
                 self.send_board(from_sock, to_sock)
                 ans = self.isWin(x, y)
                 if ans:
-                    self.send_result(who, from_sock, to_sock)
+                    self.send_result(not who, from_sock, to_sock)
         self.send_direction(not who, from_sock, to_sock)
         # os.system('pause')
 
