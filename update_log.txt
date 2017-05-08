@@ -1,0 +1,23 @@
+5/8
+bugs:
+
+fixed:输入 "x,y" 不是整型会崩溃
+fixed:不输入-g start直接输入-g 导致没有棋盘出现
+fixed:没有告诉用户自己是黑还是白
+fixed:一个人可以又下黑又下白
+fixed:下到有棋子的地方会自动跳过这一回合
+fixed:一方赢了以后还是会继续
+	游戏中直接bye 导致game没正常退出（处理了多人聊天才能fix）
+fixed:游戏中q 总是black胜利 而且没有真正退出
+	多人游戏无法处理：发送游戏状态及结果都只有两个socket，无法向所有人发送。如果要向所有人发送，需要把整个chat_server.group移植过去
+changed:-g 命令不再作为M_EXCHANGE发送
+fixed:检查胜利时，0坐标没有算进去
+
+to be developed:
+
+done:加一个介绍界面，告诉用户怎么玩
+
+
+TL,DR:
+一句话 基本上bug都修好了 就是史诗级难题 很多group和只有一个game的问题 不知道怎么解决
+

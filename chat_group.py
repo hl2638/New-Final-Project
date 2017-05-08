@@ -107,4 +107,3 @@ def main():
     g.list_all()
     print(g.list_me('b'))
     
-main()

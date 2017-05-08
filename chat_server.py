@@ -9,6 +9,9 @@ from chat_utils import *
 import chat_group as grp
 from FiveInARow import *
 
+PLAYER_BLACK = False
+PLAYER_WHITE = True
+F_END = -1
 
 class Server:
     def __init__(self):
@@ -30,7 +33,9 @@ class Server:
         self.sonnet_f.close()
         # game
         self.game = Five(10, 10)
-        self.who = False
+        self.game_started = False                           #whether game is on
+        self.who = PLAYER_BLACK                             #whose turn
+        self.players = []                                   #unused for now, to be developed
 
     def new_client(self, sock):
         # add to all sockets and to new clients
@@ -128,15 +133,44 @@ class Server:
             elif code == M_GAME:
                 move = msg[3:].strip()
                 from_name = self.logged_sock2name[from_sock]
-                to_name = self.group.list_me(from_name)[1]
-                to_sock = self.logged_name2sock[to_name]
-                if move == "start":
-                    self.who = False
-                    self.game = Five(10, 10)
+                #to_name = self.group.list_me(from_name)[1]
+                #to_sock = self.logged_name2sock[to_name]
+                if not self.game_started:               #if not started, "-g (whatever)" can start
+                    peer = move                         #"move" actually is peer name
+                    #print ("peer = ", peer, ", listme = ", self.group.list_me(from_name))
+                    if peer in self.group.list_me(from_name):
+                        to_name = peer
+                        self.players = [from_name, to_name]
+                    elif peer == '' and len(self.group.list_me(from_name)) == 2:
+                        to_name = self.group.list_me(from_name)[1]
+                        self.players = [from_name, to_name]
+                    else:
+                        mysend(from_sock, M_EXCHANGE + "No such person.")
+                        return
+                    
+                    to_sock = self.logged_name2sock[to_name]        
+                    self.game_started = True
+                    self.who = PLAYER_BLACK             #always black first, 
+                    self.game = Five(10, 10)            #though who is black is random
                     self.game.board_init(self.who, from_sock, to_sock)
+                    
+                    """peers = self.group.list_me(from_name)[1:]
+                    for peer in peers:
+                        if peer not in self.players:
+                            to_sock = self.logged_name2sock[peer]
+                            self.game.send_to_peer(to_sock)"""
                 else:
-                    self.game.make_move(self.who, move, from_sock, to_sock)
-                    self.who = not self.who
+                    if self.players[0] == from_name:
+                        to_name = self.players[1]
+                    else: to_name = self.players[0]
+                    to_sock = self.logged_name2sock[to_name]
+                    response = self.game.make_move(self.who, move, from_sock, to_sock)
+                    if not response:                    #response = true: run normally
+                        print("Wrong game command.")    #response = false: illegal command
+                    elif response == F_END:             #response = F_END = -1, game ends
+                        self.game_started = False
+                    else:
+                        self.who = not self.who
             # ==============================================================================
             # listing available peers
             # ==============================================================================

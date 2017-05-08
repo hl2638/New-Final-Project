@@ -81,6 +81,7 @@ class ClientSM:
                     if self.connect_to(peer) == True:
                         self.state = S_CHATTING
                         self.out_msg += 'Connect to ' + peer + '. Chat away!\n\n'
+                        self.out_msg += 'Enter -g to start a Five in a Row game. If there are more than one peers, Enter -g peer_name.\n\n'
                         self.out_msg += '-----------------------------------\n'
                     else:
                         self.out_msg += 'Connection unsuccessful\n'
@@ -112,6 +113,7 @@ class ClientSM:
                     self.out_msg += 'Request from ' + self.peer + '\n'
                     self.out_msg += 'You are connected with ' + self.peer
                     self.out_msg += '. Chat away!\n\n'
+                    self.out_msg += 'Enter -g to start a Five in a Row game. If there are more than one peers, enter -g peer_name.\n\n'
                     self.out_msg += '------------------------------------\n'
                     self.state = S_CHATTING
 
@@ -121,13 +123,15 @@ class ClientSM:
                 # ==============================================================================
         elif self.state == S_CHATTING:
             if len(my_msg) > 0:  # my stuff going out
-                mysend(self.s, M_EXCHANGE + "[" + self.me + "] " + my_msg)
-                if my_msg == 'bye':
-                    self.disconnect()
-                    self.state = S_LOGGEDIN
-                    self.peer = ''
                 if my_msg[:2] == "-g":
                     mysend(self.s, M_GAME + my_msg)
+                else:
+                    mysend(self.s, M_EXCHANGE + "[" + self.me + "] " + my_msg)
+                    if my_msg == 'bye':
+                        self.disconnect()
+                        self.state = S_LOGGEDIN
+                        self.peer = ''
+                        
             if len(peer_msg) > 0:  # peer's stuff, coming in
                 if peer_code == M_CONNECT:
                     self.out_msg += "(" + peer_msg + " joined)\n"
