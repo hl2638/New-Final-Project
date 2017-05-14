@@ -13,6 +13,7 @@ PLAYER_BLACK = False
 PLAYER_WHITE = True
 F_END = -1
 
+
 class Server:
     def __init__(self):
         self.new_clients = []  # list of new sockets of which the user id is not known
@@ -32,10 +33,10 @@ class Server:
         self.sonnet = pkl.load(self.sonnet_f)
         self.sonnet_f.close()
         # game
-        self.game = Five(10, 10)
-        self.game_started = False                           #whether game is on
-        self.who = PLAYER_BLACK                             #whose turn
-        self.players = []                                   #unused for now, to be developed
+        self.game = {}
+        self.game_started = {}  # whether game is on
+        self.who = PLAYER_BLACK  # whose turn # intend to make every turn uniform
+        self.players = []  # unused for now, to be developed
 
     def new_client(self, sock):
         # add to all sockets and to new clients
@@ -133,11 +134,12 @@ class Server:
             elif code == M_GAME:
                 move = msg[3:].strip()
                 from_name = self.logged_sock2name[from_sock]
-                #to_name = self.group.list_me(from_name)[1]
-                #to_sock = self.logged_name2sock[to_name]
-                if not self.game_started:               #if not started, "-g (whatever)" can start
-                    peer = move                         #"move" actually is peer name
-                    #print ("peer = ", peer, ", listme = ", self.group.list_me(from_name))
+                found, grp_num = self.group.find_group(from_name)
+                # to_name = self.group.list_me(from_name)[1]
+                # to_sock = self.logged_name2sock[to_name]
+                if not self.game_started.get(grp_num, False):  # if not started, "-g (whatever)" can start
+                    peer = move  # "move" actually is peer name
+                    # print ("peer = ", peer, ", listme = ", self.group.list_me(from_name))
                     if peer in self.group.list_me(from_name):
                         to_name = peer
                         self.players = [from_name, to_name]
@@ -147,13 +149,13 @@ class Server:
                     else:
                         mysend(from_sock, M_EXCHANGE + "No such person.")
                         return
-                    
-                    to_sock = self.logged_name2sock[to_name]        
-                    self.game_started = True
-                    self.who = PLAYER_BLACK             #always black first, 
-                    self.game = Five(10, 10)            #though who is black is random
-                    self.game.board_init(self.who, from_sock, to_sock)
-                    
+
+                    to_sock = self.logged_name2sock[to_name]
+                    self.game_started[grp_num] = True
+                    self.who = PLAYER_BLACK  # always black first,
+                    self.game[grp_num] = Five(15, 15)  # though who is black is random
+                    self.game[grp_num].board_init(self.who, from_sock, to_sock)
+
                     """peers = self.group.list_me(from_name)[1:]
                     for peer in peers:
                         if peer not in self.players:
@@ -162,13 +164,14 @@ class Server:
                 else:
                     if self.players[0] == from_name:
                         to_name = self.players[1]
-                    else: to_name = self.players[0]
+                    else:
+                        to_name = self.players[0]
                     to_sock = self.logged_name2sock[to_name]
-                    response = self.game.make_move(self.who, move, from_sock, to_sock)
-                    if not response:                    #response = true: run normally
-                        print("Wrong game command.")    #response = false: illegal command
-                    elif response == F_END:             #response = F_END = -1, game ends
-                        self.game_started = False
+                    response = self.game[grp_num].make_move(self.who, move, from_sock, to_sock)
+                    if not response:  # response = true: run normally
+                        print("Wrong game command.")  # response = false: illegal command
+                    elif response == F_END:  # response = F_END = -1, game ends
+                        self.game_started[grp_num] = False
                     else:
                         self.who = not self.who
             # ==============================================================================
@@ -216,18 +219,18 @@ class Server:
                     g = the_guys.pop()
                     to_sock = self.logged_name2sock[g]
                     mysend(to_sock, M_DISCONNECT)
-                # ==============================================================================
-                # the "from" guy really, really has had enough
-                # ==============================================================================
+                    # ==============================================================================
+                    # the "from" guy really, really has had enough
+                    # ==============================================================================
             elif code == M_LOGOUT:
                 self.logout(from_sock)
         else:
             # client died unexpectedly
             self.logout(from_sock)
 
-        # ==============================================================================
-        # main loop, loops *forever*
-        # ==============================================================================
+            # ==============================================================================
+            # main loop, loops *forever*
+            # ==============================================================================
 
     def run(self):
         print('starting server...')

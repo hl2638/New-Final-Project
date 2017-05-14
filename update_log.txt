@@ -12,6 +12,8 @@ fixed:游戏中q 总是black胜利 而且没有真正退出
 	多人游戏无法处理：发送游戏状态及结果都只有两个socket，无法向所有人发送。如果要向所有人发送，需要把整个chat_server.group移植过去
 changed:-g 命令不再作为M_EXCHANGE发送
 fixed:检查胜利时，0坐标没有算进去
+solved: one game in one group 5/14/17 Sean
+optimized: Have two kinds of boards, a big one and a small one 5/14/17 Sean
 
 to be developed:
 
@@ -19,5 +21,5 @@ done:加一个介绍界面，告诉用户怎么玩
 
 
 TL,DR:
-一句话 基本上bug都修好了 就是史诗级难题 很多group和只有一个game的问题 不知道怎么解决
+一句话 基本上bug都修好了 就是史诗级难题 很多group和只有一个game的问题 不知道怎么解决 solved 5/14/17
 
