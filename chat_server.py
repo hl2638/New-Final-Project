@@ -35,7 +35,7 @@ class Server:
         # game
         self.game = {}
         self.game_started = {}  # whether game is on
-        self.who = PLAYER_BLACK  # whose turn # intend to make every turn uniform
+        self.who = {}  # whose turn # intend to make every turn uniform
         self.players = []  # unused for now, to be developed
 
     def new_client(self, sock):
@@ -128,6 +128,7 @@ class Server:
                     to_sock = self.logged_name2sock[g]
                     self.indices[g].add_msg_and_index(said2)
                     mysend(to_sock, msg)
+                # send board to everyone in the group except the players
             # ==============================================================================
             # handle game module
             # ==============================================================================
@@ -152,9 +153,9 @@ class Server:
 
                     to_sock = self.logged_name2sock[to_name]
                     self.game_started[grp_num] = True
-                    self.who = PLAYER_BLACK  # always black first,
+                    self.who[grp_num] = PLAYER_BLACK  # always black first,
                     self.game[grp_num] = Five(15, 15)  # though who is black is random
-                    self.game[grp_num].board_init(self.who, from_sock, to_sock)
+                    self.game[grp_num].board_init(self.who[grp_num], from_sock, to_sock)
 
                     """peers = self.group.list_me(from_name)[1:]
                     for peer in peers:
@@ -167,13 +168,13 @@ class Server:
                     else:
                         to_name = self.players[0]
                     to_sock = self.logged_name2sock[to_name]
-                    response = self.game[grp_num].make_move(self.who, move, from_sock, to_sock)
+                    response = self.game[grp_num].make_move(self.who[grp_num], move, from_sock, to_sock)
                     if not response:  # response = true: run normally
                         print("Wrong game command.")  # response = false: illegal command
                     elif response == F_END:  # response = F_END = -1, game ends
                         self.game_started[grp_num] = False
                     else:
-                        self.who = not self.who
+                        self.who[grp_num] = not self.who[grp_num]
             # ==============================================================================
             # listing available peers
             # ==============================================================================
