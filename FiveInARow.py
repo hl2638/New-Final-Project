@@ -171,6 +171,10 @@ class Five:
         mysend(from_sock, cboard)
         mysend(to_sock, cboard)
 
+    def send_to_peer(self, to_peer):
+        cboard = self.printboard()
+        mysend(to_peer, cboard)
+
     @staticmethod
     def send_instructions(from_sock, to_sock):
         msg = " Welcome to Five in a Row game.\nInput (x,y) to play a piece on tile (x,y).\n"
