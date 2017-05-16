@@ -36,8 +36,8 @@ class Server:
         self.game = {}
         self.game_started = {}  # whether game is on
         self.who = {}  # whose turn # intend to make every turn uniform
-        self.players = {}  # unused for now, to be developed
-        self.blocklist = {}  # unused for now. people who don't want to receive game board in here.
+        self.players = {}  # stores the players in each group
+        self.blocklist = []  # unused for now. people who don't want to receive game board in here.
 
     def new_client(self, sock):
         # add to all sockets and to new clients
@@ -135,6 +135,10 @@ class Server:
             elif code == M_GAME:
                 move = msg[3:].strip()
                 from_name = self.logged_sock2name[from_sock]
+                # if someone does not want to see the board anymore
+                if move == "blockMe":
+                    self.blocklist.append(from_name)
+                    return
                 found, grp_num = self.group.find_group(from_name)
                 # to_name = self.group.list_me(from_name)[1]
                 # to_sock = self.logged_name2sock[to_name]
@@ -161,10 +165,12 @@ class Server:
                     # send board to everyone in the group except the players
                     peers = self.group.list_me(from_name)[1:]
                     for peer in peers:
-                        if peer not in self.players[grp_num]:
+                        if peer not in self.players[grp_num] and peer not in self.blocklist:
                             to_peer = self.logged_name2sock[peer]
                             self.game[grp_num].send_to_peer(to_peer)
                             mysend(to_peer, " You are watching %s and %s playing." % tuple(self.players[grp_num]))
+                            mysend(to_peer, " If you don't want to receive this, input '-g blockMe'")
+
                 else:
                     if self.players[grp_num][0] == from_name:
                         to_name = self.players[grp_num][1]
@@ -183,11 +189,12 @@ class Server:
                         # send board to everyone in the group except the players
                         peers = self.group.list_me(from_name)[1:]
                         for peer in peers:
-                            if peer not in self.players[grp_num]:
+                            if peer not in self.players[grp_num] and peer not in self.blocklist:
                                 to_peer = self.logged_name2sock[peer]
                                 self.game[grp_num].send_to_peer(to_peer)
                                 mysend(to_peer, " %s made the move %s." % (from_name, move))
                                 mysend(to_peer, " You are watching %s and %s playing." % tuple(self.players[grp_num]))
+                                mysend(to_peer, " If you don't want to receive this, input '-g blockMe'")
             # ==============================================================================
             # listing available peers
             # ==============================================================================

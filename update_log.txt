@@ -1,5 +1,5 @@
 5/8
-bugs:
+BUGS:
 
 fixed:输入 "x,y" 不是整型会崩溃
 fixed:不输入-g start直接输入-g 导致没有棋盘出现
@@ -13,13 +13,18 @@ fixed:游戏中q 总是black胜利 而且没有真正退出
 changed:-g 命令不再作为M_EXCHANGE发送
 fixed:检查胜利时，0坐标没有算进去
 
-solved: one game in one group 5/14/17 Sean
-optimized: Have two kinds of boards, a big one and a small one 5/14/17 Sean
-solved: who也改成每组一个 5/15/17 Sean
+solved: one game in one group. 5/14/17 Sean
+optimized: Have two kinds of boards, a big one and a small one. 5/14/17 Sean
+solved: who也改成每组一个. 5/15/17 Sean
+optimized: People can watch the game in the same group. 5/16/17 Sean
+optimized: People can choose whether to watch or not. 5/16/17 Sean
+to be: people can choose the board size
 
-to be developed:
+
+TO BE DEVELOPED:
 
 done:加一个介绍界面，告诉用户怎么玩
+
 
 
 TL,DR:
