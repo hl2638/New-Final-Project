@@ -160,9 +160,9 @@ class Five:
                     if self.board[i][j] == 0:
                         result += '   +'
                     elif self.board[i][j] == 1:
-                        result += ' o'
+                        result += '   o'
                     elif self.board[i][j] == 2:
-                        result += ' *'
+                        result += '   *'
                 result += "\n\n"
             return result
 
