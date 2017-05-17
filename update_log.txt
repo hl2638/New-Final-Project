@@ -17,7 +17,7 @@ solved: one game in one group. 5/14/17 Sean
 optimized: Have two kinds of boards, a big one and a small one. 5/14/17 Sean
 solved: who也改成每组一个. 5/15/17 Sean
 optimized: People can watch the game in the same group. 5/16/17 Sean
-optimized: People can choose whether to watch or not. 5/16/17 Sean
+optimized: People can choose whether to watch or not. 5/17/17 Sean
 to be: people can choose the board size
 
 

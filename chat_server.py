@@ -139,6 +139,11 @@ class Server:
                 if move == "blockMe":
                     self.blocklist.append(from_name)
                     return
+                # if someone wants to see the board
+                if move == "unblockMe":
+                    if from_name in self.blocklist:
+                        self.blocklist.remove(from_name)
+                    return
                 found, grp_num = self.group.find_group(from_name)
                 # to_name = self.group.list_me(from_name)[1]
                 # to_sock = self.logged_name2sock[to_name]
