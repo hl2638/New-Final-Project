@@ -113,7 +113,7 @@ class ClientSM:
                     self.out_msg += 'Request from ' + self.peer + '\n'
                     self.out_msg += 'You are connected with ' + self.peer
                     self.out_msg += '. Chat away!\n\n'
-                    self.out_msg += 'Enter -g to start a Five in a Row game. If there are more than one peers, enter -g peer_name.\n\n'
+                    self.out_msg += 'Enter -g to start a Five in a Row game. \If there are more than one peers, enter -g peer_name.\n\n'
                     self.out_msg += '------------------------------------\n'
                     self.state = S_CHATTING
 

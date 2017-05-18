@@ -9,7 +9,7 @@ PLAYER_WHITE = True
 F_END = -1
 
 
-class Five:
+class Gomoku:
     def __init__(self, max_x, max_y):
         self.max_x = max_x
         self.max_y = max_y
@@ -54,7 +54,6 @@ class Five:
 
             if self.board[x][y] == 0:
                 self.board[x][y] = 1 if who else 2
-                # os.system('cls')
                 self.send_board(from_sock, to_sock)
 
                 ans = self.isWin(x, y)
@@ -77,7 +76,7 @@ class Five:
     def isWin(self, xPoint, yPoint):  # determine if one wins
         # pdb.set_trace
         # flag = False
-        t = self.board[xPoint][yPoint]
+        t = self.board[xPoint][yPoint]  # t is the stone on the point
 
         # horizontal
         count, x, y = 0, xPoint, yPoint
@@ -186,6 +185,11 @@ class Five:
         result = (' WHITE' if who else ' BLACK') + ' Wins'
         mysend(from_sock, result)
         mysend(to_sock, result)
+
+    @staticmethod
+    def send_peer_result(who, to_peer):
+        result = (' WHITE' if who else ' BLACK') + ' Wins'
+        mysend(to_peer, result)
 
     def send_direction(self, who, from_sock, to_sock):
         if who == PLAYER_WHITE:  # white turn, send to black and white players
